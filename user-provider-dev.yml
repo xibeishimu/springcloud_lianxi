@@ -1,0 +1,46 @@
+server:
+  port: 18081
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/springcloud?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+  application:
+    name: user-provider   #服务的名字，不同的应用，名字不同，如果是集群，名字需要相同
+#指定eureka服务地址
+eureka:
+  client:
+    service-url:
+      # EurekaServer的地址
+      defaultZone: http://localhost:7001/eureka
+    # 每隔30获取服务列表(只读备份),更新请求列表，默认是30秒
+    registry-fetch-interval-seconds: 30
+
+  instance:
+    #指定IP地址
+    ip-address: 127.0.0.1
+    #访问服务的时候，推荐使用IP 部署环境的地址
+    prefer-ip-address: true   #访问的时候可以用IP
+    #租约到期，服务时效时间，默认值90秒
+    lease-expiration-duration-in-seconds: 150
+    #租约续约间隔时间，默认30秒
+    lease-renewal-interval-in-seconds: 30
+# 配置熔断策略：
+hystrix:
+  command:
+    default:
+      circuitBreaker:
+        # 强制打开熔断器 默认false关闭的。测试配置是否生效，打开后，所有请求都被拒绝
+        forceOpen: false
+        # 熔断触发最小请求次数，默认值是20，允许同时请求的线程数
+        requestVolumeThreshold: 4
+        # 触发熔断错误比例阈值，默认值50%，如果上面是10，经过些参数后就是5
+        errorThresholdPercentage: 50
+        # 熔断后休眠时长，默认值5秒
+        sleepWindowInMilliseconds: 10000
+      execution:
+        isolation:
+          thread:
+            # 熔断超时设置，默认为1秒。这里是毫秒单位
+            timeoutInMilliseconds: 3000
